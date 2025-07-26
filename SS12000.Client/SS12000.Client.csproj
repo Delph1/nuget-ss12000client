@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- NuGet Packaging Properties -->
+    <IsPackable>true</IsPackable> <!-- Important: Makes the project packable -->
+    <PackageId>SS12000.Client</PackageId> <!-- Unique ID for your package on NuGet.org -->
+    <Version>0.1.0</Version> <!-- Current version of your package -->
+    <Authors>Andreas Galistel</Authors> <!-- Your name or organization -->
+    <Company>Galistel Consulting AB</Company>
+    <Description>A C# client library for the SS12000 API, providing structured and asynchronous interaction with all API endpoints.</Description> <!-- Short description -->
+    <PackageReleaseNotes>Initial release of the SS12000 C# Client Library.</PackageReleaseNotes> <!-- Notes for this specific version -->
+    <Copyright>Copyright (c) 2024 Andreas Galistel</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile> <!-- Points to your LICENSE file -->
+    <PackageReadmeFile>README.md</PackageReadmeFile> <!-- Points to your README.md file -->
+    <RepositoryUrl>https://github.com/Delph1/nuget-ss12000client</RepositoryUrl> <!-- Link to your GitHub repo -->
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>SS12000;API;Client;Education;School</PackageTags> <!-- Keywords for searchability -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild> <!-- Set to true if you want to pack on every build -->
+  </PropertyGroup>
+
+    <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="6.0.10" /> <!-- Or newer, ensure it matches your target framework -->
+    <PackageReference Include="System.Web.HttpUtility" Version="1.0.0" /> <!-- Or newer -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Include your README.md and LICENSE file in the package -->
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
