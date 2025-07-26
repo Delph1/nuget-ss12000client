@@ -50,7 +50,7 @@ cd MySS12000App
    </ItemGroup\>
 ```
 
-   You might need to run dotnet add package System.Web.HttpUtility if it's not resolved automatically.
+   The package has only two real dependencies: Microsoft.AspNetCore.WebUtilities and System.Text.Json. Add them manually if they don't resolve automatically. 
 
 ## **Usage**
 
