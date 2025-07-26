@@ -29,6 +29,11 @@ All dates are in the RFC 3339 format, we're not cavemen here.
 
 ## **Installation**
 
+1. Add the nuget package:
+```
+dotnet add package SS12000.Client --version 0.1.0
+```
+or start from scratch:
 1. **Create a .NET Project:** If you don't have one, create a new .NET project (e.g., Console App, Web API).  
 ```
 dotnet new console -n MySS12000App  
