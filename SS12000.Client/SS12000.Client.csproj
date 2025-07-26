@@ -29,8 +29,8 @@
 
   <ItemGroup>
     <!-- Include your README.md and LICENSE file in the package -->
-    <None Include="README.md" Pack="true" PackagePath="\" />
-    <None Include="LICENSE" Pack="true" PackagePath="\" />
+    <None Include="../README.md" Pack="true" PackagePath="\" />
+    <None Include="../LICENSE" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
