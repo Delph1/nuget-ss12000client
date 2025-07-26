@@ -12,16 +12,20 @@ All dates are in the RFC 3339 format, we're not cavemen here.
 
 ## **Table of Contents**
 
-* [Installation](https://www.google.com/search?q=%23installation)  
-* [Usage](https://www.google.com/search?q=%23usage)  
-  * [Initializing the Client](https://www.google.com/search?q=%23initializing-the-client)  
-  * [Fetching Organizations](https://www.google.com/search?q=%23fetching-organizations)  
-  * [Fetching Persons](https://www.google.com/search?q=%23fetching-persons)  
-  * [Webhooks (Subscriptions)](https://www.google.com/search?q=%23webhooks-subscriptions)  
-* [API Reference](https://www.google.com/search?q=%23api-reference)  
-* [Webhook Receiver (ASP.NET Core Example)](https://www.google.com/search?q=%23webhook-receiver-aspnet-core-example)  
-* [Contributing](https://www.google.com/search?q=%23contributing)  
-* [License](https://www.google.com/search?q=%23license)
+- [**SS12000 C# Client Library**](#ss12000-c-client-library)
+    - [**Important**](#important)
+  - [**Table of Contents**](#table-of-contents)
+  - [**Installation**](#installation)
+  - [**Usage**](#usage)
+    - [**Initializing the Client**](#initializing-the-client)
+    - [**Fetching Organizations**](#fetching-organizations)
+    - [**Fetching Persons**](#fetching-persons)
+    - [**Fetch ...**](#fetch-)
+    - [**Webhooks (Subscriptions)**](#webhooks-subscriptions)
+  - [**API Reference**](#api-reference)
+  - [**Webhook Receiver (ASP.NET Core Example)**](#webhook-receiver-aspnet-core-example)
+  - [**Contribute**](#contribute)
+  - [**License**](#license)
 
 ## **Installation**
 

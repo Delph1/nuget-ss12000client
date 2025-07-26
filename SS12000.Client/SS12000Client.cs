@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Web; // For HttpUtility.ParseQueryString
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace SS12000.Client
 {
@@ -38,7 +38,8 @@ namespace SS12000.Client
             // Add HTTPS check for baseUrl
             if (!baseUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
             {
-                Console.WriteLine("Warning: Base URL does not use HTTPS. All communication should occur over HTTPS in production environments to ensure security.");
+                Console.WriteLine("Warning: Base URL does not use HTTPS. All communication should occur over HTTPS " +
+                                  "in production environments to ensure security.");
             }
 
             if (string.IsNullOrWhiteSpace(authToken))
@@ -69,11 +70,12 @@ namespace SS12000.Client
         /// <exception cref="HttpRequestException">If the request fails.</exception>
         private async Task<T> RequestAsync<T>(HttpMethod method, string path, Dictionary<string, object> queryParams = null, object jsonContent = null)
         {
-            var uriBuilder = new UriBuilder(new Uri(new Uri(_baseUrl), path));
+            // Use Uri constructor for robust path combining
+            string requestUri = new Uri(new Uri(_baseUrl), path).ToString();
 
             if (queryParams != null)
             {
-                var queryString = HttpUtility.ParseQueryString(uriBuilder.Query);
+                // QueryHelpers.AddQueryString requires the full URI string
                 foreach (var param in queryParams)
                 {
                     if (param.Value == null) continue;
@@ -82,31 +84,32 @@ namespace SS12000.Client
                     {
                         foreach (var item in stringList)
                         {
-                            queryString.Add(param.Key, item);
+                            requestUri = QueryHelpers.AddQueryString(requestUri, param.Key, item);
                         }
                     }
                     else if (param.Value is bool boolValue)
                     {
-                        queryString.Add(param.Key, boolValue.ToString().ToLowerInvariant());
+                        requestUri = QueryHelpers.AddQueryString(requestUri, param.Key, boolValue.ToString().ToLowerInvariant());
                     }
                     else
                     {
-                        queryString.Add(param.Key, param.Value.ToString());
+                        requestUri = QueryHelpers.AddQueryString(requestUri, param.Key, param.Value.ToString());
                     }
                 }
-                uriBuilder.Query = queryString.ToString();
             }
 
-            var request = new HttpRequestMessage(method, uriBuilder.Uri);
+            var request = new HttpRequestMessage(method, requestUri);
 
             if (jsonContent != null)
             {
                 request.Content = new StringContent(JsonSerializer.Serialize(jsonContent), Encoding.UTF8, "application/json");
             }
 
+            HttpResponseMessage response = null; // Declare response here
+
             try
             {
-                var response = await _httpClient.SendAsync(request);
+                response = await _httpClient.SendAsync(request); // Assign response here
                 response.EnsureSuccessStatusCode(); // Throws HttpRequestException for 4xx or 5xx responses
 
                 if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
@@ -119,10 +122,11 @@ namespace SS12000.Client
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine($"Error during {method} call to {uriBuilder.Uri}: {e.Message}");
-                if (e.StatusCode.HasValue)
+                Console.WriteLine($"Error during {method} call to {requestUri}: {e.Message}");
+                // Access the HttpResponseMessage from the captured 'response' variable
+                if (response != null)
                 {
-                    var errorContent = await e.Data["ResponseContent"].ToStringAsync(); // Custom error handling for content
+                    var errorContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     Console.WriteLine($"API Error Response: {errorContent}");
                 }
                 throw;
@@ -144,11 +148,12 @@ namespace SS12000.Client
         /// <exception cref="HttpRequestException">If the request fails.</exception>
         private async Task RequestNoContentAsync(HttpMethod method, string path, Dictionary<string, object> queryParams = null, object jsonContent = null)
         {
-            var uriBuilder = new UriBuilder(new Uri(new Uri(_baseUrl), path));
+            // Use Uri constructor for robust path combining
+            string requestUri = new Uri(new Uri(_baseUrl), path).ToString();
 
             if (queryParams != null)
             {
-                var queryString = HttpUtility.ParseQueryString(uriBuilder.Query);
+                // QueryHelpers.AddQueryString requires the full URI string
                 foreach (var param in queryParams)
                 {
                     if (param.Value == null) continue;
@@ -157,39 +162,41 @@ namespace SS12000.Client
                     {
                         foreach (var item in stringList)
                         {
-                            queryString.Add(param.Key, item);
+                            requestUri = QueryHelpers.AddQueryString(requestUri, param.Key, item);
                         }
                     }
                     else if (param.Value is bool boolValue)
                     {
-                        queryString.Add(param.Key, boolValue.ToString().ToLowerInvariant());
+                        requestUri = QueryHelpers.AddQueryString(requestUri, param.Key, boolValue.ToString().ToLowerInvariant());
                     }
                     else
                     {
-                        queryString.Add(param.Key, param.Value.ToString());
+                        requestUri = QueryHelpers.AddQueryString(requestUri, param.Key, param.Value.ToString());
                     }
                 }
-                uriBuilder.Query = queryString.ToString();
             }
 
-            var request = new HttpRequestMessage(method, uriBuilder.Uri);
+            var request = new HttpRequestMessage(method, requestUri);
 
             if (jsonContent != null)
             {
                 request.Content = new StringContent(JsonSerializer.Serialize(jsonContent), Encoding.UTF8, "application/json");
             }
 
+            HttpResponseMessage response = null; // Declare response here
+
             try
             {
-                var response = await _httpClient.SendAsync(request);
+                response = await _httpClient.SendAsync(request); // Assign response here
                 response.EnsureSuccessStatusCode(); // Throws HttpRequestException for 4xx or 5xx responses
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine($"Error during {method} call to {uriBuilder.Uri}: {e.Message}");
-                if (e.StatusCode.HasValue)
+                Console.WriteLine($"Error during {method} call to {requestUri}: {e.Message}");
+                // Access the HttpResponseMessage from the captured 'response' variable
+                if (response != null)
                 {
-                    var errorContent = await e.Data["ResponseContent"].ToStringAsync(); // Custom error handling for content
+                    var errorContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     Console.WriteLine($"API Error Response: {errorContent}");
                 }
                 throw;
