@@ -8,7 +8,7 @@
     <!-- NuGet Packaging Properties -->
     <IsPackable>true</IsPackable> <!-- Important: Makes the project packable -->
     <PackageId>SS12000.Client</PackageId> <!-- Unique ID for your package on NuGet.org -->
-    <Version>0.1.0</Version> <!-- Current version of your package -->
+    <Version>0.1.1</Version> <!-- Current version of your package -->
     <Authors>Andreas Galistel</Authors> <!-- Your name or organization -->
     <Company>Galistel Consulting AB</Company>
     <Description>A C# client library for the SS12000 API, providing structured and asynchronous interaction with all API endpoints.</Description> <!-- Short description -->
