@@ -200,92 +200,96 @@ The SS12000Client class is designed to expose asynchronous methods for all SS120
 Here is a list of the primary resource paths defined in the OpenAPI specification, along with their corresponding client methods:
 
 * /organisations  
-  * GetOrganisationsAsync(Dictionary\<string, object\> queryParams)  
+  * GetOrganisationsAsync(queryParams)  
   * LookupOrganisationsAsync(object body, bool expandReferenceNames)  
   * GetOrganisationByIdAsync(string orgId, bool expandReferenceNames)  
 * /persons  
-  * GetPersonsAsync(Dictionary\<string, object\> queryParams)  
+  * GetPersonsAsync(queryParams)  
   * LookupPersonsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetPersonByIdAsync(string personId, List\<string\> expand, bool expandReferenceNames)  
 * /placements  
-  * GetPlacementsAsync(Dictionary\<string, object\> queryParams)  
+  * GetPlacementsAsync(queryParams)  
   * LookupPlacementsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetPlacementByIdAsync(string placementId, List\<string\> expand, bool expandReferenceNames)  
 * /duties  
-  * GetDutiesAsync(Dictionary\<string, object\> queryParams)  
+  * GetDutiesAsync(queryParams)  
   * LookupDutiesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetDutyByIdAsync(string dutyId, List\<string\> expand, bool expandReferenceNames)  
 * /groups  
-  * GetGroupsAsync(Dictionary\<string, object\> queryParams)  
+  * GetGroupsAsync(queryParams)  
   * LookupGroupsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetGroupByIdAsync(string groupId, List\<string\> expand, bool expandReferenceNames)  
 * /programmes  
-  * GetProgrammesAsync(Dictionary\<string, object\> queryParams)  
+  * GetProgrammesAsync(queryParams)  
   * LookupProgrammesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetProgrammeByIdAsync(string programmeId, List\<string\> expand, bool expandReferenceNames)  
 * /studyplans  
-  * GetStudyPlansAsync(Dictionary\<string, object\> queryParams)  
+  * GetStudyPlansAsync(queryParams)  
   * LookupStudyPlansAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetStudyPlanByIdAsync(string studyPlanId, List\<string\> expand, bool expandReferenceNames)  
 * /syllabuses  
-  * GetSyllabusesAsync(Dictionary\<string, object\> queryParams)  
+  * GetSyllabusesAsync(queryParams)  
   * LookupSyllabusesAsync(object body, bool expandReferenceNames)  
   * GetSyllabusByIdAsync(string syllabusId, bool expandReferenceNames)  
 * /schoolUnitOfferings  
-  * GetSchoolUnitOfferingsAsync(Dictionary\<string, object\> queryParams)  
+  * GetSchoolUnitOfferingsAsync(queryParams)  
   * LookupSchoolUnitOfferingsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetSchoolUnitOfferingByIdAsync(string offeringId, List\<string\> expand, bool expandReferenceNames)  
 * /activities  
-  * GetActivitiesAsync(Dictionary\<string, object\> queryParams)  
+  * GetActivitiesAsync(queryParams)  
   * LookupActivitiesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetActivityByIdAsync(string activityId, List\<string\> expand, bool expandReferenceNames)  
 * /calendarEvents  
-  * GetCalendarEventsAsync(Dictionary\<string, object\> queryParams)  
+  * GetCalendarEventsAsync(queryParams)  
   * LookupCalendarEventsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetCalendarEventByIdAsync(string eventId, List\<string\> expand, bool expandReferenceNames)  
 * /attendances  
-  * GetAttendancesAsync(Dictionary\<string, object\> queryParams)  
+  * GetAttendancesAsync(queryParams)  
   * LookupAttendancesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetAttendanceByIdAsync(string attendanceId, List\<string\> expand, bool expandReferenceNames)  
   * DeleteAttendanceAsync(string attendanceId)  
 * /attendanceEvents  
-  * GetAttendanceEventsAsync(Dictionary\<string, object\> queryParams)  
+  * GetAttendanceEventsAsync(queryParams)  
   * LookupAttendanceEventsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetAttendanceEventByIdAsync(string eventId, List\<string\> expand, bool expandReferenceNames)
   * DeleteAttendanceEventByIdAsync(string attendanceEventId)  
 * /attendanceSchedules  
-  * GetAttendanceSchedulesAsync(Dictionary\<string, object\> queryParams)  
+  * GetAttendanceSchedulesAsync(queryParams)  
   * LookupAttendanceSchedulesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetAttendanceScheduleByIdAsync(string scheduleId, List\<string\> expand, bool expandReferenceNames)
   * DeleteAttendanceScheduleByIdAsync(string attendanceScheduleId)  
 * /grades  
-  * GetGradesAsync(Dictionary\<string, object\> queryParams)  
+  * GetGradesAsync(queryParams)  
   * LookupGradesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetGradeByIdAsync(string gradeId, List\<string\> expand, bool expandReferenceNames)  
+  * GetGradeByIdAsync(string gradeId, List\<string\> expand, bool expandReferenceNames)
+* /absenses
+  * GetAbsencesAsync(queryParams)
+  * LookupAbsencesAsync(object body, bool expandedReferenceNames)
+  * GetAbsenceByIdAsync(string absenceId)
 * /aggregatedAttendance  
-  * GetAggregatedAttendancesAsync(Dictionary\<string, object\> queryParams)  
+  * GetAggregatedAttendancesAsync(queryParams)  
   * LookupAggregatedAttendancesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
   * GetAggregatedAttendanceByIdAsync(string attendanceId, List\<string\> expand, bool expandReferenceNames)  
 * /resources  
-  * GetResourcesAsync(Dictionary\<string, object\> queryParams)  
+  * GetResourcesAsync(queryParams)  
   * LookupResourcesAsync(object body, bool expandReferenceNames)  
   * GetResourceByIdAsync(string resourceId, bool expandReferenceNames)  
 * /rooms  
-  * GetRoomsAsync(Dictionary\<string, object\> queryParams)  
+  * GetRoomsAsync(queryParams)  
   * LookupRoomsAsync(object body, bool expandReferenceNames)  
   * GetRoomByIdAsync(string roomId, bool expandReferenceNames)  
 * /subscriptions  
-  * GetSubscriptionsAsync(Dictionary\<string, object\> queryParams)  
+  * GetSubscriptionsAsync(queryParams)  
   * CreateSubscriptionAsync(object body)  
   * DeleteSubscriptionAsync(string subscriptionId)  
   * GetSubscriptionByIdAsync(string subscriptionId)  
   * UpdateSubscriptionAsync(string subscriptionId, object body)  
 * /deletedEntities  
-  * GetDeletedEntitiesAsync(Dictionary\<string, object\> queryParams)  
+  * GetDeletedEntitiesAsync(queryParams)  
 * /log  
-  * GetLogAsync(Dictionary\<string, object\> queryParams)  
+  * CreateLogEntryAsync(object body)
 * /statistics  
-  * GetStatisticsAsync(Dictionary\<string, object\> queryParams)
+  * CreateStatisticsAsync(object body)
 
 Detailed information on available parameters can be found in the XML documentation comments within SS12000Client.cs.
 
