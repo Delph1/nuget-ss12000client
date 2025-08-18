@@ -803,9 +803,56 @@ namespace SS12000.Client
         /// Get a list of study plans.
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
+        /// <param name="student">Filter by student IDs.</param>
+        /// <param name="startDateOnOrBefore">Filter by start date on or before</param>
+        /// <param name="startDateOnOrAfter">Filter by start date on or after.</param>
+        /// <param name="endDateOnOrBefore">Filter by end date on or before.</param>
+        /// <param name="endDateOnOrAfter">Filter by end date on or after.</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before.</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after.</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before.</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after.</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="sortkey">Sort key for the results.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of study plans.</returns>
-        public async Task<JsonElement> GetStudyPlansAsync(Dictionary<string, object> queryParams = null)
+        public async Task<JsonElement> GetStudyPlansAsync(
+            IEnumerable<string> student = null,
+            DateTime? startDateOnOrBefore = null,
+            DateTime? startDateOnOrAfter = null,
+            DateTime? endDateOnOrBefore = null,
+            DateTime? endDateOnOrAfter = null,
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            bool? expandReferenceNames = null,
+            string sortkey = null,
+            int? limit = null,
+            string pageToken = null)
         {
+            var queryParams = new Dictionary<string, object>();
+
+            if (student != null) queryParams.Add("student", student);
+
+            // Date filters (date-only)
+            if (startDateOnOrBefore.HasValue) queryParams.Add("startDate.onOrBefore", startDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+            if (startDateOnOrAfter.HasValue)  queryParams.Add("startDate.onOrAfter",  startDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+            if (endDateOnOrBefore.HasValue)   queryParams.Add("endDate.onOrBefore",   endDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+            if (endDateOnOrAfter.HasValue)    queryParams.Add("endDate.onOrAfter",    endDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+
+            // Meta timestamps (RFC3339 / ISO 8601)
+            if (metaCreatedBefore.HasValue)  queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/studyplans", queryParams);
         }
 
@@ -813,28 +860,27 @@ namespace SS12000.Client
         /// Get multiple study plans based on a list of IDs.
         /// </summary>
         /// <param name="body">Request body with IDs.</param>
-        /// <param name="expand">Describes if expanded data should be fetched.</param>
         /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
         /// <returns>A list of study plans.</returns>
-        public async Task<JsonElement> LookupStudyPlansAsync(object body, List<string> expand = null, bool expandReferenceNames = false)
-        {
-            var queryParams = new Dictionary<string, object>();
-            if (expand != null) queryParams.Add("expand", expand);
-            if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
-            return await RequestAsync<JsonElement>(HttpMethod.Post, "/studyplans/lookup", queryParams, body);
-        }
+
+        /// lookup is not part of the standard for studyplans, but it is included for consistency with other endpoints.
+
+        /// public async Task<JsonElement> LookupStudyPlansAsync(object body, bool expandReferenceNames = false)
+        /// {
+        ///     var queryParams = new Dictionary<string, object>();
+        ///     if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
+        ///     return await RequestAsync<JsonElement>(HttpMethod.Post, "/studyplans/lookup", queryParams, body);
+        /// }
 
         /// <summary>
         /// Get a study plan by ID.
         /// </summary>
         /// <param name="studyPlanId">ID of the study plan.</param>
-        /// <param name="expand">Describes if expanded data should be fetched.</param>
         /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
         /// <returns>The study plan object.</returns>
-        public async Task<JsonElement> GetStudyPlanByIdAsync(string studyPlanId, List<string> expand = null, bool expandReferenceNames = false)
+        public async Task<JsonElement> GetStudyPlanByIdAsync(string studyPlanId, bool expandReferenceNames = false)
         {
             var queryParams = new Dictionary<string, object>();
-            if (expand != null) queryParams.Add("expand", expand);
             if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
             return await RequestAsync<JsonElement>(HttpMethod.Get, $"/studyplans/{studyPlanId}", queryParams);
         }
