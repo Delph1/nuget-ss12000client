@@ -1585,6 +1585,83 @@ namespace SS12000.Client
             return await RequestAsync<JsonElement>(HttpMethod.Get, $"/grades/{gradeId}", queryParams);
         }
 
+        /// --- Absences Endpoints ---
+
+        /// <summary>
+        /// Get a list of absences.
+        /// </summary>  
+        /// <param name="queryParams">Filter parameters.</param>
+        /// <returns>A list of absences.</returns>
+
+        public async Task<JsonElement> GetAbsencesAsync(
+            string student = null,
+            string organisation = null,
+            string registeredBy = null,
+            IEnumerable<string> type = null,
+            DateTime? startDateOnOrBefore = null,
+            DateTime? startDateOnOrAfter = null,
+            DateTime? endDateOnOrBefore = null,
+            DateTime? endDateOnOrAfter = null,
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            bool? expandReferenceNames = null,
+            string sortkey = null,
+            int? limit = null,
+            string pageToken = null
+        )
+        {
+            var queryParams = new Dictionary<string, object>();
+            if (!string.IsNullOrEmpty(student)) queryParams.Add("student", student);
+            if (!string.IsNullOrEmpty(organisation)) queryParams.Add("organisation", organisation);
+            if (!string.IsNullOrEmpty(registeredBy)) queryParams.Add("registeredBy", registeredBy);
+            if (type != null && type.Any()) queryParams.Add("type", type);
+
+            // Date filters (date-only)
+            if (startDateOnOrBefore.HasValue) queryParams.Add("startDate.onOrBefore", startDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+            if (startDateOnOrAfter.HasValue)  queryParams.Add("startDate.onOrAfter",  startDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+            if (endDateOnOrBefore.HasValue)   queryParams.Add("endDate.onOrBefore",   endDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+            if (endDateOnOrAfter.HasValue)    queryParams.Add("endDate.onOrAfter",    endDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+
+            // Meta timestamps (RFC3339 / ISO 8601)
+            if (metaCreatedBefore.HasValue)  queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);  
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
+            return await RequestAsync<JsonElement>(HttpMethod.Get, "/absences", queryParams);
+        }
+
+        /// <summary>
+        /// Get multiple absences based on a list of IDs.
+        /// </summary>
+        /// <param name="body">Request body with IDs.</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <returns>A list of absences.</returns>
+        public async Task<JsonElement> LookupAbsencesAsync(object body, bool expandReferenceNames = false)
+        {
+            var queryParams = new Dictionary<string, object>();
+            if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
+            return await RequestAsync<JsonElement>(HttpMethod.Post, "/absences/lookup", queryParams, body);
+        }
+
+        /// <summary>
+        /// Get an absence by ID.
+        /// </summary>
+        /// <param name="absenceId">ID of the absence.</param>
+        /// <returns>The absence object.</returns>
+        public async Task<JsonElement> GetAbsenceByIdAsync(string absenceId)
+        {
+            var queryParams = new Dictionary<string, object>();
+            return await RequestAsync<JsonElement>(HttpMethod.Get, $"/absences/{absenceId}", queryParams);
+        }
+
         // --- AggregatedAttendance Endpoints ---
 
         /// <summary>
