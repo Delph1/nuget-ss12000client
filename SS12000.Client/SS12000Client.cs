@@ -1816,7 +1816,7 @@ namespace SS12000.Client
             if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
             if (limit.HasValue) queryParams.Add("limit", limit.Value);
             if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
-            
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/rooms", queryParams);
         }
 
@@ -1851,17 +1851,26 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of subscriptions.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of subscriptions.</returns>
-        public async Task<JsonElement> GetSubscriptionsAsync(Dictionary<string, object> queryParams = null)
+        public async Task<JsonElement> GetSubscriptionsAsync(
+            int? limit = null,
+            string pageToken = null
+        )
         {
+            var queryParams = new Dictionary<string, object>();
+
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/subscriptions", queryParams);
         }
 
         /// <summary>
         /// Create a subscription.
         /// </summary>
-        /// <param name="body">Request body with subscription details.</param>
+        /// <param name="body">Request body with subscription details according to /components/schemas/CreateSubscription.</param>
         /// <returns>The created subscription object.</returns>
         public async Task<JsonElement> CreateSubscriptionAsync(object body)
         {
@@ -1891,23 +1900,11 @@ namespace SS12000.Client
         /// Update the expire time of a subscription by ID.
         /// </summary>
         /// <param name="subscriptionId">ID of the subscription to update.</param>
-        /// <param name="body">Request body with expiry timestamp.</param>
+        /// <param name="body">Request body with expiry timestamp according to /components/schemas/CreateSubscription.</param>
         /// <returns>The updated subscription object.</returns>
         public async Task<JsonElement> UpdateSubscriptionAsync(string subscriptionId, object body)
         {
             return await RequestAsync<JsonElement>(HttpMethod.Patch, $"/subscriptions/{subscriptionId}", jsonContent: body);
-        }
-
-        // --- DeletedEntities Endpoint ---
-
-        /// <summary>
-        /// Get a list of deleted entities.
-        /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
-        /// <returns>A list of deleted entities.</returns>
-        public async Task<JsonElement> GetDeletedEntitiesAsync(Dictionary<string, object> queryParams = null)
-        {
-            return await RequestAsync<JsonElement>(HttpMethod.Get, "/deletedEntities", queryParams);
         }
 
         // --- Log Endpoint ---
@@ -1932,6 +1929,18 @@ namespace SS12000.Client
         public async Task<JsonElement> GetStatisticsAsync(Dictionary<string, object> queryParams = null)
         {
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/statistics", queryParams);
+        }
+
+        // --- DeletedEntities Endpoint ---
+
+        /// <summary>
+        /// Get a list of deleted entities.
+        /// </summary>
+        /// <param name="queryParams">Filter parameters.</param>
+        /// <returns>A list of deleted entities.</returns>
+        public async Task<JsonElement> GetDeletedEntitiesAsync(Dictionary<string, object> queryParams = null)
+        {
+            return await RequestAsync<JsonElement>(HttpMethod.Get, "/deletedEntities", queryParams);
         }
 
         /// <summary>
