@@ -891,11 +891,40 @@ namespace SS12000.Client
         /// Get a list of syllabuses.
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before.</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after.</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before.</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after.</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="sortkey">Sort key for the results.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of syllabuses.</returns>
-        public async Task<JsonElement> GetSyllabusesAsync(Dictionary<string, object> queryParams = null)
+        public async Task<JsonElement> GetSyllabusesAsync(
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            bool? expandReferenceNames = null,
+            string sortkey = null,
+            int? limit = null,
+            string pageToken = null)
         {
+            var queryParams = new Dictionary<string, object>();
+
+            // Meta timestamps (RFC3339 / ISO 8601)
+            if (metaCreatedBefore.HasValue)  queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/syllabuses", queryParams);
-        }
+        }       
 
         /// <summary>
         /// Get multiple syllabuses based on a list of IDs.
