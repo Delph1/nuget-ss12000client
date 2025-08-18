@@ -213,7 +213,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of organizations.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
         /// <param name="parent">Filter by parent organization IDs.</param>
         /// <param name="schoolUnitCode">Filter by school unit codes.</param>
         /// <param name="organisationCode">Filter by organization codes.</param>
@@ -314,7 +313,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of persons.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
         /// <param name="nameContains">Filter by name contains.</param>
         /// <param name="civicNo">Filter by civic number.</param>
         /// <param name="eduPersonPrincipalName">Filter by eduPersonPrincipalName.</param>
@@ -425,7 +423,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of placements.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
         /// <param name="organisation">Filter by organization ID.</param>
         /// <param name="group">Filter by group ID.</param>
         /// <param name="startDateOnOrBefore">Filter by start date on or before.</param>
@@ -527,7 +524,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of duties.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
         /// <param name="person">Filter by person IDs.</param>
         /// <param name="organisation">Filter by organization IDs.</param>
         /// <param name="dutyRole">Filter by duty role IDs.</param>
@@ -625,7 +621,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of groups.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
         /// <param name="groupType">Filter by group type.</param>
         /// <param name="organisation">Filter by organization IDs.</param>
         /// <param name="schoolTypes">Filter by school types.</param>
@@ -723,7 +718,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of programmes.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
         /// <param name="schoolType">Filter by school type.</param>
         /// <param name="code">Filter by programme code.</param>
         /// <param name="parentProgramme">Filter by parent programme ID.</param>
@@ -802,7 +796,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of study plans.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
         /// <param name="student">Filter by student IDs.</param>
         /// <param name="startDateOnOrBefore">Filter by start date on or before</param>
         /// <param name="startDateOnOrAfter">Filter by start date on or after.</param>
@@ -890,7 +883,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of syllabuses.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
         /// <param name="metaCreatedBefore">Filter by metadata created before.</param>
         /// <param name="metaCreatedAfter">Filter by metadata created after.</param>
         /// <param name="metaModifiedBefore">Filter by metadata modified before.</param>
@@ -1027,11 +1019,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of activities.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
-        /// <returns>A list of activities.</returns>
-        /// <summary>
-        /// Get a list of activities.
-        /// </summary>
         /// <param name="organisation">Filter by organisation IDs.</param>
         /// <param name="member">Filter by member IDs.</param>
         /// <param name="teacher">Filter by teacher IDs.</param>
@@ -1129,11 +1116,6 @@ namespace SS12000.Client
 
         // --- CalendarEvents Endpoints ---
 
-        /// <summary>
-        /// Get a list of calendar events.
-        /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
-        /// <returns>A list of calendar events.</returns>
         /// <summary>
         /// Get a list of calendar events.
         /// </summary>
@@ -1239,11 +1221,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of attendances.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
-        /// <returns>A list of attendances.</returns>
-        /// <summary>
-        /// Get a list of attendances.
-        /// </summary>
         /// <param name="student">Filter by student IDs.</param>
         /// <param name="organisation">Filter by organisation IDs.</param>
         /// <param name="calendarEvent">Filter by calendar event ID.</param>
@@ -1327,7 +1304,16 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of attendance events.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
+        /// <param name="group">Filter by group IDs.</param>
+        /// <param name="person">Filter by person ID.</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before (date-time).</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after (date-time).</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before (date-time).</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after (date-time).</param>
+        /// <param name="expand">Describes if expanded data should be fetched.</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of attendance events.</returns>
         public async Task<JsonElement> GetAttendanceEventsAsync(
             IEnumerable<string> group = null,
@@ -1498,11 +1484,6 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of grades.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
-        /// <returns>A list of grades.</returns>
-        /// <summary>
-        /// Get a list of grades.
-        /// </summary>
         /// <param name="organisation">Filter by organisation (UUID).</param>
         /// <param name="student">Filter by student (UUID).</param>
         /// <param name="registeredBy">Filter by the person who registered the grade (UUID).</param>
@@ -1590,7 +1571,22 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of absences.
         /// </summary>  
-        /// <param name="queryParams">Filter parameters.</param>
+        /// <param name="student">Filter by student ID.</param>
+        /// <param name="organisation">Filter by organisation ID.</param>
+        /// <param name="registeredBy">Filter by the person who registered the absence (UUID).</param>
+        /// <param name="type">Filter by absence type.</param>
+        /// <param name="startDateOnOrBefore">Filter by start date on or before (date-only).</param>
+        /// <param name="startDateOnOrAfter">Filter by start date on or after (date-only).</param>
+        /// <param name="endDateOnOrBefore">Filter by end date on or before (date-only).</param>
+        /// <param name="endDateOnOrAfter">Filter by end date on or after (date-only).</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before (date-time).</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after (date-time).</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before (date-time).</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after (date-time).</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="sortkey">Sort key for the results.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of absences.</returns>
 
         public async Task<JsonElement> GetAbsencesAsync(
