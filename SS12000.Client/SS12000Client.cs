@@ -1029,8 +1029,71 @@ namespace SS12000.Client
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
         /// <returns>A list of activities.</returns>
-        public async Task<JsonElement> GetActivitiesAsync(Dictionary<string, object> queryParams = null)
+        /// <summary>
+        /// Get a list of activities.
+        /// </summary>
+        /// <param name="organisation">Filter by organisation IDs.</param>
+        /// <param name="member">Filter by member IDs.</param>
+        /// <param name="teacher">Filter by teacher IDs.</param>
+        /// <param name="group">Filter by group IDs.</param>
+        /// <param name="startDateOnOrBefore">Filter by start date on or before (date-only).</param>
+        /// <param name="startDateOnOrAfter">Filter by start date on or after (date-only).</param>
+        /// <param name="endDateOnOrBefore">Filter by end date on or before (date-only).</param>
+        /// <param name="endDateOnOrAfter">Filter by end date on or after (date-only).</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before (date-time).</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after (date-time).</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before (date-time).</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after (date-time).</param>
+        /// <param name="expand">Describes if expanded data should be fetched.</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="sortkey">Sort key for the results.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
+        /// <returns>A list of activities.</returns>
+        public async Task<JsonElement> GetActivitiesAsync(
+            string organisation = null,
+            string member = null,
+            string teacher = null,
+            string group = null,
+            DateTime? startDateOnOrBefore = null,
+            DateTime? startDateOnOrAfter = null,
+            DateTime? endDateOnOrBefore = null,
+            DateTime? endDateOnOrAfter = null,
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            List<string> expand = null,
+            bool? expandReferenceNames = null,
+            string sortkey = null,
+            int? limit = null,
+            string pageToken = null)
         {
+            var queryParams = new Dictionary<string, object>();
+
+            if (organisation != null) queryParams.Add("organisation", organisation);
+            if (group != null) queryParams.Add("group", group);
+            if (member != null) queryParams.Add("member", member);
+            if (teacher != null) queryParams.Add("teacher", teacher);
+
+            // Date filters (date-only)
+            if (startDateOnOrBefore.HasValue) queryParams.Add("startDate.onOrBefore", startDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+            if (startDateOnOrAfter.HasValue)  queryParams.Add("startDate.onOrAfter",  startDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+            if (endDateOnOrBefore.HasValue)   queryParams.Add("endDate.onOrBefore",   endDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+            if (endDateOnOrAfter.HasValue)    queryParams.Add("endDate.onOrAfter",    endDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+
+            // Meta timestamps (RFC3339 / ISO 8601)
+            if (metaCreatedBefore.HasValue)  queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expand != null) queryParams.Add("expand", expand);
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/activities", queryParams);
         }
 
