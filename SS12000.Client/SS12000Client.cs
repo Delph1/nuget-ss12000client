@@ -725,8 +725,36 @@ namespace SS12000.Client
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
         /// <returns>A list of programmes.</returns>
-        public async Task<JsonElement> GetProgrammesAsync(Dictionary<string, object> queryParams = null)
+        public async Task<JsonElement> GetProgrammesAsync(
+            IEnumerable<string> schoolType = null,
+            string code = null,
+            string parentProgramme = null,
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            bool? expandReferenceNames = null,
+            string sortkey = null,
+            int? limit = null,
+            string pageToken = null)
         {
+            var queryParams = new Dictionary<string, object>();
+
+            if (schoolType != null) queryParams.Add("schoolType", schoolType);
+            if (code != null) queryParams.Add("code", code);
+            if (parentProgramme != null) queryParams.Add("parentProgramme", parentProgramme);
+
+            // Meta timestamps (RFC3339 / ISO 8601)
+            if (metaCreatedBefore.HasValue)  queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/programmes", queryParams);
         }
 
@@ -734,13 +762,11 @@ namespace SS12000.Client
         /// Get multiple programmes based on a list of IDs.
         /// </summary>
         /// <param name="body">Request body with IDs.</param>
-        /// <param name="expand">Describes if expanded data should be fetched.</param>
         /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
         /// <returns>A list of programmes.</returns>
-        public async Task<JsonElement> LookupProgrammesAsync(object body, List<string> expand = null, bool expandReferenceNames = false)
+        public async Task<JsonElement> LookupProgrammesAsync(object body, bool expandReferenceNames = false)
         {
             var queryParams = new Dictionary<string, object>();
-            if (expand != null) queryParams.Add("expand", expand);
             if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
             return await RequestAsync<JsonElement>(HttpMethod.Post, "/programmes/lookup", queryParams, body);
         }
