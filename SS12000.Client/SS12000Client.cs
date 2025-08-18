@@ -1667,42 +1667,47 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of aggregated attendances.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
+        /// <param name="startDate">Filter by start date (date-only).</param>
+        /// <param name="endDate">Filter by end date (date-only).</param>
+        /// <param name="organisation">Filter by organisation (UUID).</param>
+        /// <param name="schoolType">Filter by school type (e.g., Primary, Secondary).</param>
+        /// <param name="student">Filter by student (UUID).</param>
+        /// <param name="expand">Describes if expanded data should be fetched.</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of aggregated attendances.</returns>
-        public async Task<JsonElement> GetAggregatedAttendancesAsync(Dictionary<string, object> queryParams = null)
+        public async Task<JsonElement> GetAggregatedAttendancesAsync(
+            DateTime? startDate = null,
+            DateTime? endDate = null,
+            string organisation = null,
+            IEnumerable<string> schoolType = null,
+            IEnumerable<string> student = null,
+            List<string> expand = null,
+            bool? expandReferenceNames = null,
+            int? limit = 100,
+            string pageToken = null
+        )
         {
+            var queryParams = new Dictionary<string, object>();
+
+            // Date filters (date-only)
+            if (startDate.HasValue) queryParams.Add("startDate", startDate.Value.ToString("yyyy-MM-dd"));
+            if (endDate.HasValue)   queryParams.Add("endDate",   endDate.Value.ToString("yyyy-MM-dd"));
+
+            if (!string.IsNullOrEmpty(organisation)) queryParams.Add("organisation", organisation);
+            if (schoolType != null && schoolType.Any()) queryParams.Add("schoolType", schoolType);
+            if (student != null && student.Any()) queryParams.Add("student", student);
+
+            if (expand != null) queryParams.Add("expand", expand);
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/aggregatedAttendance", queryParams);
         }
 
-        /// <summary>
-        /// Get multiple aggregated attendances based on a list of IDs.
-        /// </summary>
-        /// <param name="body">Request body with IDs.</param>
-        /// <param name="expand">Describes if expanded data should be fetched.</param>
-        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
-        /// <returns>A list of aggregated attendances.</returns>
-        public async Task<JsonElement> LookupAggregatedAttendancesAsync(object body, List<string> expand = null, bool expandReferenceNames = false)
-        {
-            var queryParams = new Dictionary<string, object>();
-            if (expand != null) queryParams.Add("expand", expand);
-            if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
-            return await RequestAsync<JsonElement>(HttpMethod.Post, "/aggregatedAttendance/lookup", queryParams, body);
-        }
-
-        /// <summary>
-        /// Get an aggregated attendance by ID.
-        /// </summary>
-        /// <param name="attendanceId">ID of the aggregated attendance.</param>
-        /// <param name="expand">Describes if expanded data should be fetched.</param>
-        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
-        /// <returns>The aggregated attendance object.</returns>
-        public async Task<JsonElement> GetAggregatedAttendanceByIdAsync(string attendanceId, List<string> expand = null, bool expandReferenceNames = false)
-        {
-            var queryParams = new Dictionary<string, object>();
-            if (expand != null) queryParams.Add("expand", expand);
-            if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
-            return await RequestAsync<JsonElement>(HttpMethod.Get, $"/aggregatedAttendance/{attendanceId}", queryParams);
-        }
+        /// Lookup and individual aggregated attendance by ID not implemented as it is not part of the standard.
 
         // --- Resources Endpoints ---
 
