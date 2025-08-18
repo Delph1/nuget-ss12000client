@@ -1329,8 +1329,34 @@ namespace SS12000.Client
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
         /// <returns>A list of attendance events.</returns>
-        public async Task<JsonElement> GetAttendanceEventsAsync(Dictionary<string, object> queryParams = null)
+        public async Task<JsonElement> GetAttendanceEventsAsync(
+            IEnumerable<string> group = null,
+            string person = null,
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            List<string> expand = null,
+            bool? expandReferenceNames = null,
+            int? limit = null,
+            string pageToken = null)
         {
+            var queryParams = new Dictionary<string, object>();
+
+            if (group != null) queryParams.Add("group", group);
+            if (!string.IsNullOrEmpty(person)) queryParams.Add("person", person);
+
+            // Meta timestamps (RFC3339 / ISO 8601)
+            if (metaCreatedBefore.HasValue)  queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expand != null) queryParams.Add("expand", expand);
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/attendanceEvents", queryParams);
         }
 
@@ -1362,6 +1388,16 @@ namespace SS12000.Client
             if (expand != null) queryParams.Add("expand", expand);
             if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
             return await RequestAsync<JsonElement>(HttpMethod.Get, $"/attendanceEvents/{eventId}", queryParams);
+        }
+
+        /// <summary>
+        /// Get an attendance event by ID.
+        /// </summary>
+        /// <param name="eventId">ID of the attendance event.</param>
+        /// <returns>The attendance event object.</returns>
+        public async Task DeleteAttendanceEventByIdAsync(string eventId)
+        {
+            await RequestNoContentAsync(HttpMethod.Delete, $"/attendanceEvents/{eventId}");
         }
 
         // --- AttendanceSchedules Endpoints ---
