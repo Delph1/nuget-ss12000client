@@ -337,7 +337,7 @@ namespace SS12000.Client
         /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of persons.</returns>
         public async Task<JsonElement> GetPersonsAsync(
-            IEnumerable<string> nameContains = null,
+            string nameContains = null,
             string civicNo = null,
             string eduPersonPrincipalName = null,
             string identifierValue = null,
@@ -427,8 +427,51 @@ namespace SS12000.Client
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
         /// <returns>A list of placements.</returns>
-        public async Task<JsonElement> GetPlacementsAsync(Dictionary<string, object> queryParams = null)
+        public async Task<JsonElement> GetPlacementsAsync(
+            string organisation = null,
+            string group = null,
+            DateTime? startDateOnOrBefore = null,
+            DateTime? startDateOnOrAfter = null,
+            DateTime? endDateOnOrBefore = null,
+            DateTime? endDateOnOrAfter = null,
+            string child = null,
+            string owner = null,
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            List<string> expand = null,
+            bool? expandReferenceNames = null,
+            string sortkey = null,
+            int? limit = null,
+            string pageToken = null)
         {
+            var queryParams = new Dictionary<string, object>();
+
+            if (organisation != null) queryParams.Add("organisation", organisation);
+            if (group != null) queryParams.Add("group", group);
+
+            // Date filters (date-only)
+            if (startDateOnOrBefore.HasValue) queryParams.Add("startDate.onOrBefore", startDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+            if (startDateOnOrAfter.HasValue)  queryParams.Add("startDate.onOrAfter",  startDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+            if (endDateOnOrBefore.HasValue)   queryParams.Add("endDate.onOrBefore",   endDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+            if (endDateOnOrAfter.HasValue)    queryParams.Add("endDate.onOrAfter",    endDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+
+            if (child != null) queryParams.Add("child", child);
+            if (owner != null) queryParams.Add("owner", owner);
+
+            // Meta timestamps (RFC3339 / ISO 8601)
+            if (metaCreatedBefore.HasValue) queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expand != null) queryParams.Add("expand", expand);
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/placements", queryParams);
         }
 
