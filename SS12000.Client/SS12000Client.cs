@@ -1500,8 +1500,62 @@ namespace SS12000.Client
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
         /// <returns>A list of grades.</returns>
-        public async Task<JsonElement> GetGradesAsync(Dictionary<string, object> queryParams = null)
+        /// <summary>
+        /// Get a list of grades.
+        /// </summary>
+        /// <param name="organisation">Filter by organisation (UUID).</param>
+        /// <param name="student">Filter by student (UUID).</param>
+        /// <param name="registeredBy">Filter by the person who registered the grade (UUID).</param>
+        /// <param name="gradingTeacher">Filter by grading teacher (UUID).</param>
+        /// <param name="registeredDateOnOrAfter">Filter by registered date on or after (date-only).</param>
+        /// <param name="registeredDateOnOrBefore">Filter by registered date on or before (date-only).</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before (date-time).</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after (date-time).</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before (date-time).</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after (date-time).</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="sortkey">Sort key for the results.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
+        /// <returns>A list of grades.</returns>
+        public async Task<JsonElement> GetGradesAsync(
+            string organisation = null,
+            string student = null,
+            string registeredBy = null,
+            string gradingTeacher = null,
+            DateTime? registeredDateOnOrAfter = null,
+            DateTime? registeredDateOnOrBefore = null,
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            bool? expandReferenceNames = null,
+            string sortkey = null,
+            int? limit = null,
+            string pageToken = null)
         {
+            var queryParams = new Dictionary<string, object>();
+
+            if (!string.IsNullOrEmpty(organisation)) queryParams.Add("organisation", organisation);
+            if (!string.IsNullOrEmpty(student)) queryParams.Add("student", student);
+            if (!string.IsNullOrEmpty(registeredBy)) queryParams.Add("registeredBy", registeredBy);
+            if (!string.IsNullOrEmpty(gradingTeacher)) queryParams.Add("gradingTeacher", gradingTeacher);
+
+            // registered date filters (date-only)
+            if (registeredDateOnOrAfter.HasValue)  queryParams.Add("registeredDate.onOrAfter",  registeredDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+            if (registeredDateOnOrBefore.HasValue) queryParams.Add("registeredDate.onOrBefore", registeredDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+
+            // Meta timestamps (RFC3339 / ISO 8601)
+            if (metaCreatedBefore.HasValue)  queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/grades", queryParams);
         }
 
@@ -1509,13 +1563,11 @@ namespace SS12000.Client
         /// Get multiple grades based on a list of IDs.
         /// </summary>
         /// <param name="body">Request body with IDs.</param>
-        /// <param name="expand">Describes if expanded data should be fetched.</param>
         /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
         /// <returns>A list of grades.</returns>
-        public async Task<JsonElement> LookupGradesAsync(object body, List<string> expand = null, bool expandReferenceNames = false)
+        public async Task<JsonElement> LookupGradesAsync(object body, bool expandReferenceNames = false)
         {
             var queryParams = new Dictionary<string, object>();
-            if (expand != null) queryParams.Add("expand", expand);
             if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
             return await RequestAsync<JsonElement>(HttpMethod.Post, "/grades/lookup", queryParams, body);
         }
@@ -1524,13 +1576,11 @@ namespace SS12000.Client
         /// Get a grade by ID.
         /// </summary>
         /// <param name="gradeId">ID of the grade.</param>
-        /// <param name="expand">Describes if expanded data should be fetched.</param>
         /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
         /// <returns>The grade object.</returns>
-        public async Task<JsonElement> GetGradeByIdAsync(string gradeId, List<string> expand = null, bool expandReferenceNames = false)
+        public async Task<JsonElement> GetGradeByIdAsync(string gradeId, bool expandReferenceNames = false)
         {
             var queryParams = new Dictionary<string, object>();
-            if (expand != null) queryParams.Add("expand", expand);
             if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
             return await RequestAsync<JsonElement>(HttpMethod.Get, $"/grades/{gradeId}", queryParams);
         }
