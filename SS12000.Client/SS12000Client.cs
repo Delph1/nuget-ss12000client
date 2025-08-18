@@ -724,6 +724,17 @@ namespace SS12000.Client
         /// Get a list of programmes.
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
+        /// <param name="schoolType">Filter by school type.</param>
+        /// <param name="code">Filter by programme code.</param>
+        /// <param name="parentProgramme">Filter by parent programme ID.</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before.</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after.</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before.</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after.</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="sortkey">Sort key for the results.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of programmes.</returns>
         public async Task<JsonElement> GetProgrammesAsync(
             IEnumerable<string> schoolType = null,
