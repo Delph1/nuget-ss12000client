@@ -1910,25 +1910,29 @@ namespace SS12000.Client
         // --- Log Endpoint ---
 
         /// <summary>
-        /// Get a list of log entries.
+        /// Create a log entry.
+        /// Matches OpenAPI: POST /log
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
-        /// <returns>A list of log entries.</returns>
-        public async Task<JsonElement> GetLogAsync(Dictionary<string, object> queryParams = null)
+        /// <param name="body">Request body for the log entry (per /components/schemas/LogEntry).</param>
+        /// <returns>Created log entry or server response.</returns>
+        public async Task<JsonElement> CreateLogEntryAsync(object body)
         {
-            return await RequestAsync<JsonElement>(HttpMethod.Get, "/log", queryParams);
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            return await RequestAsync<JsonElement>(HttpMethod.Post, "/log", jsonContent: body);
         }
 
         // --- Statistics Endpoint ---
 
         /// <summary>
-        /// Get a list of statistics.
+        /// Log statistics related to transferred objects.
+        /// Matches OpenAPI: POST /statistics
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
-        /// <returns>A list of statistics.</returns>
-        public async Task<JsonElement> GetStatisticsAsync(Dictionary<string, object> queryParams = null)
+        /// <param name="body">Request body matching /components/schemas/StatisticsEntry (or array of entries).</param>
+        /// <returns>Created statistics entry or server response.</returns>
+        public async Task<JsonElement> CreateStatisticsAsync(object body)
         {
-            return await RequestAsync<JsonElement>(HttpMethod.Get, "/statistics", queryParams);
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            return await RequestAsync<JsonElement>(HttpMethod.Post, "/statistics", jsonContent: body);
         }
 
         // --- DeletedEntities Endpoint ---
@@ -1936,10 +1940,25 @@ namespace SS12000.Client
         /// <summary>
         /// Get a list of deleted entities.
         /// </summary>
-        /// <param name="queryParams">Filter parameters.</param>
+        /// <param name="after">Filter by deletion timestamp after this date (RFC3339 format).</param>
+        /// <param name="entities">Filter by specific entity types (e.g., Person, Organisation).</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of deleted entities.</returns>
-        public async Task<JsonElement> GetDeletedEntitiesAsync(Dictionary<string, object> queryParams = null)
+        public async Task<JsonElement> GetDeletedEntitiesAsync(
+            DateTime? after = null,
+            IEnumerable<string> entities = null,
+            int? limit = null,
+            string pageToken = null
+        )
         {
+            var queryParams = new Dictionary<string, object>();
+
+            if (after.HasValue) queryParams.Add("after", after.Value.ToString("o")); // RFC3339 format
+            if (entities != null && entities.Any()) queryParams.Add("entities", entities);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/deletedEntities", queryParams);
         }
 
