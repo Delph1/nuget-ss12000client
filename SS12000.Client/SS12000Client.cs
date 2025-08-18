@@ -1241,8 +1241,51 @@ namespace SS12000.Client
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
         /// <returns>A list of attendances.</returns>
-        public async Task<JsonElement> GetAttendancesAsync(Dictionary<string, object> queryParams = null)
+        /// <summary>
+        /// Get a list of attendances.
+        /// </summary>
+        /// <param name="student">Filter by student IDs.</param>
+        /// <param name="organisation">Filter by organisation IDs.</param>
+        /// <param name="calendarEvent">Filter by calendar event ID.</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before (date-time).</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after (date-time).</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before (date-time).</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after (date-time).</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="sortkey">Sort key for the results.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
+        /// <returns>A list of attendances.</returns>
+        public async Task<JsonElement> GetAttendancesAsync(
+            string student = null,
+            string organisation = null,
+            string calendarEvent = null,
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            bool? expandReferenceNames = null,
+            string sortkey = null,
+            int? limit = null,
+            string pageToken = null)
         {
+            var queryParams = new Dictionary<string, object>();
+
+            if (student != null) queryParams.Add("student", student);
+            if (organisation != null) queryParams.Add("organisation", organisation);
+            if (!string.IsNullOrEmpty(calendarEvent)) queryParams.Add("calendarEvent", calendarEvent);
+
+            // Meta timestamps (RFC3339 / ISO 8601)
+            if (metaCreatedBefore.HasValue)  queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/attendances", queryParams);
         }
 
@@ -1250,13 +1293,11 @@ namespace SS12000.Client
         /// Get multiple attendances based on a list of IDs.
         /// </summary>
         /// <param name="body">Request body with IDs.</param>
-        /// <param name="expand">Describes if expanded data should be fetched.</param>
         /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
         /// <returns>A list of attendances.</returns>
-        public async Task<JsonElement> LookupAttendancesAsync(object body, List<string> expand = null, bool expandReferenceNames = false)
+        public async Task<JsonElement> LookupAttendancesAsync(object body, bool expandReferenceNames = false)
         {
             var queryParams = new Dictionary<string, object>();
-            if (expand != null) queryParams.Add("expand", expand);
             if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
             return await RequestAsync<JsonElement>(HttpMethod.Post, "/attendances/lookup", queryParams, body);
         }
@@ -1265,14 +1306,10 @@ namespace SS12000.Client
         /// Get an attendance by ID.
         /// </summary>
         /// <param name="attendanceId">ID of the attendance.</param>
-        /// <param name="expand">Describes if expanded data should be fetched.</param>
-        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
         /// <returns>The attendance object.</returns>
-        public async Task<JsonElement> GetAttendanceByIdAsync(string attendanceId, List<string> expand = null, bool expandReferenceNames = false)
+        public async Task<JsonElement> GetAttendanceByIdAsync(string attendanceId)
         {
             var queryParams = new Dictionary<string, object>();
-            if (expand != null) queryParams.Add("expand", expand);
-            if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
             return await RequestAsync<JsonElement>(HttpMethod.Get, $"/attendances/{attendanceId}", queryParams);
         }
 
