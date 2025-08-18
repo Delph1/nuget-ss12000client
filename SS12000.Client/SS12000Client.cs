@@ -426,6 +426,23 @@ namespace SS12000.Client
         /// Get a list of placements.
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
+        /// <param name="organisation">Filter by organization ID.</param>
+        /// <param name="group">Filter by group ID.</param>
+        /// <param name="startDateOnOrBefore">Filter by start date on or before.</param>
+        /// <param name="startDateOnOrAfter">Filter by start date on or after.</param>
+        /// <param name="endDateOnOrBefore">Filter by end date on or before.</param>
+        /// <param name="endDateOnOrAfter">Filter by end date on or after.</param>
+        /// <param name="child">Filter by child ID.</param>
+        /// <param name="owner">Filter by owner ID.</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before.</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after.</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before.</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after.</param>
+        /// <param name="expand">Describes if expanded data should be fetched.</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="sortkey">Sort key for the results.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of placements.</returns>
         public async Task<JsonElement> GetPlacementsAsync(
             string organisation = null,
