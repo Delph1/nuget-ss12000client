@@ -1134,8 +1134,75 @@ namespace SS12000.Client
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
         /// <returns>A list of calendar events.</returns>
-        public async Task<JsonElement> GetCalendarEventsAsync(Dictionary<string, object> queryParams = null)
+        /// <summary>
+        /// Get a list of calendar events.
+        /// </summary>
+        /// <param name="startTimeOnOrAfter">Hämta kalenderhändelser från och med denna tidpunkt (RFC 3339 date-time) (required).</param>
+        /// <param name="startTimeOnOrBefore">Hämta kalenderhändelser till och med denna tidpunkt (RFC 3339 date-time) (required).</param>
+        /// <param name="endTimeOnOrBefore">Hämta kalenderhändelser till och med denna tidpunkt (RFC 3339 date-time).</param>
+        /// <param name="endTimeOnOrAfter">Hämta kalenderhändelser från och med denna tidpunkt (RFC 3339 date-time).</param>
+        /// <param name="activity">Filter by activity id.</param>
+        /// <param name="student">Filter by student id.</param>
+        /// <param name="teacher">Filter by teacher id.</param>
+        /// <param name="organisation">Filter by organisation id.</param>
+        /// <param name="group">Filter by group id.</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before (date-time).</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after (date-time).</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before (date-time).</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after (date-time).</param>
+        /// <param name="expand">Which embedded resources to expand (activity, attendance).</param>
+        /// <param name="expandReferenceNames">Return displayName for referenced objects.</param>
+        /// <param name="sortkey">Sort key (ModifiedDesc, StartTimeAsc, StartTimeDesc).</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Pagination token.</param>
+        /// <returns>A list of calendar events.</returns>
+        public async Task<JsonElement> GetCalendarEventsAsync(
+            DateTime startTimeOnOrAfter,
+            DateTime startTimeOnOrBefore,
+            DateTime? endTimeOnOrBefore = null,
+            DateTime? endTimeOnOrAfter = null,
+            string activity = null,
+            string student = null,
+            string teacher = null,
+            string organisation = null,
+            string group = null,
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            List<string> expand = null,
+            bool? expandReferenceNames = null,
+            string sortkey = null,
+            int? limit = null,
+            string pageToken = null)
         {
+            var queryParams = new Dictionary<string, object>();
+
+            // required startTime range (RFC3339 / ISO 8601)
+            queryParams.Add("startTime.onOrAfter", startTimeOnOrAfter.ToString("o"));
+            queryParams.Add("startTime.onOrBefore", startTimeOnOrBefore.ToString("o"));
+
+            if (endTimeOnOrBefore.HasValue) queryParams.Add("endTime.onOrBefore", endTimeOnOrBefore.Value.ToString("o"));
+            if (endTimeOnOrAfter.HasValue)  queryParams.Add("endTime.onOrAfter",  endTimeOnOrAfter.Value.ToString("o"));
+
+            if (!string.IsNullOrEmpty(activity))     queryParams.Add("activity", activity);
+            if (!string.IsNullOrEmpty(student))      queryParams.Add("student", student);
+            if (!string.IsNullOrEmpty(teacher))      queryParams.Add("teacher", teacher);
+            if (!string.IsNullOrEmpty(organisation)) queryParams.Add("organisation", organisation);
+            if (!string.IsNullOrEmpty(group))        queryParams.Add("group", group);
+
+            // Meta timestamps
+            if (metaCreatedBefore.HasValue)  queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expand != null) queryParams.Add("expand", expand);
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/calendarEvents", queryParams);
         }
 
@@ -1143,13 +1210,11 @@ namespace SS12000.Client
         /// Get multiple calendar events based on a list of IDs.
         /// </summary>
         /// <param name="body">Request body with IDs.</param>
-        /// <param name="expand">Describes if expanded data should be fetched.</param>
         /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
         /// <returns>A list of calendar events.</returns>
-        public async Task<JsonElement> LookupCalendarEventsAsync(object body, List<string> expand = null, bool expandReferenceNames = false)
+        public async Task<JsonElement> LookupCalendarEventsAsync(object body, bool expandReferenceNames = false)
         {
             var queryParams = new Dictionary<string, object>();
-            if (expand != null) queryParams.Add("expand", expand);
             if (expandReferenceNames) queryParams.Add("expandReferenceNames", true);
             return await RequestAsync<JsonElement>(HttpMethod.Post, "/calendarEvents/lookup", queryParams, body);
         }
