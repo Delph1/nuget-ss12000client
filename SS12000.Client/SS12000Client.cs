@@ -528,9 +528,65 @@ namespace SS12000.Client
         /// Get a list of duties.
         /// </summary>
         /// <param name="queryParams">Filter parameters.</param>
+        /// <param name="person">Filter by person IDs.</param>
+        /// <param name="organisation">Filter by organization IDs.</param>
+        /// <param name="dutyRole">Filter by duty role IDs.</param>
+        /// <param name="startDateOnOrBefore">Filter by start date on or before.</param>
+        /// <param name="startDateOnOrAfter">Filter by start date on or after.</param>
+        /// <param name="endDateOnOrBefore">Filter by end date on or before.</param>
+        /// <param name="endDateOnOrAfter">Filter by end date on or after.</param>
+        /// <param name="metaCreatedBefore">Filter by metadata created before.</param>
+        /// <param name="metaCreatedAfter">Filter by metadata created after.</param>
+        /// <param name="metaModifiedBefore">Filter by metadata modified before.</param>
+        /// <param name="metaModifiedAfter">Filter by metadata modified after.</param>
+        /// <param name="expand">Describes if expanded data should be fetched.</param>
+        /// <param name="expandReferenceNames">Return `displayName` for all referenced objects.</param>
+        /// <param name="sortkey">Sort key for the results.</param>
+        /// <param name="limit">Maximum number of results to return.</param>
+        /// <param name="pageToken">Token for pagination.</param>
         /// <returns>A list of duties.</returns>
-        public async Task<JsonElement> GetDutiesAsync(Dictionary<string, object> queryParams = null)
+        public async Task<JsonElement> GetDutiesAsync(
+            IEnumerable<string> person = null,
+            IEnumerable<string> organisation = null,
+            IEnumerable<string> dutyRole = null,
+            DateTime? startDateOnOrBefore = null,
+            DateTime? startDateOnOrAfter = null,
+            DateTime? endDateOnOrBefore = null,
+            DateTime? endDateOnOrAfter = null,
+            DateTime? metaCreatedBefore = null,
+            DateTime? metaCreatedAfter = null,
+            DateTime? metaModifiedBefore = null,
+            DateTime? metaModifiedAfter = null,
+            List<string> expand = null,
+            bool? expandReferenceNames = null,
+            string sortkey = null,
+            int? limit = null,
+            string pageToken = null)
         {
+            var queryParams = new Dictionary<string, object>();
+
+            if (person != null) queryParams.Add("person", person);
+            if (organisation != null) queryParams.Add("organisation", organisation);
+            if (dutyRole != null) queryParams.Add("dutyRole", dutyRole);
+
+            // Date filters (date-only)
+            if (startDateOnOrBefore.HasValue) queryParams.Add("startDate.onOrBefore", startDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+            if (startDateOnOrAfter.HasValue)  queryParams.Add("startDate.onOrAfter",  startDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+            if (endDateOnOrBefore.HasValue)   queryParams.Add("endDate.onOrBefore",   endDateOnOrBefore.Value.ToString("yyyy-MM-dd"));
+            if (endDateOnOrAfter.HasValue)    queryParams.Add("endDate.onOrAfter",    endDateOnOrAfter.Value.ToString("yyyy-MM-dd"));
+
+            // Meta timestamps (RFC3339 / ISO 8601)
+            if (metaCreatedBefore.HasValue)  queryParams.Add("meta.created.before", metaCreatedBefore.Value.ToString("o"));
+            if (metaCreatedAfter.HasValue)   queryParams.Add("meta.created.after",  metaCreatedAfter.Value.ToString("o"));
+            if (metaModifiedBefore.HasValue) queryParams.Add("meta.modified.before", metaModifiedBefore.Value.ToString("o"));
+            if (metaModifiedAfter.HasValue)  queryParams.Add("meta.modified.after",  metaModifiedAfter.Value.ToString("o"));
+
+            if (expand != null) queryParams.Add("expand", expand);
+            if (expandReferenceNames.HasValue) queryParams.Add("expandReferenceNames", expandReferenceNames.Value);
+            if (!string.IsNullOrEmpty(sortkey)) queryParams.Add("sortkey", sortkey);
+            if (limit.HasValue) queryParams.Add("limit", limit.Value);
+            if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
+
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/duties", queryParams);
         }
 
