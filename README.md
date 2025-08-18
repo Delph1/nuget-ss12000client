@@ -251,11 +251,13 @@ Here is a list of the primary resource paths defined in the OpenAPI specificatio
 * /attendanceEvents  
   * GetAttendanceEventsAsync(Dictionary\<string, object\> queryParams)  
   * LookupAttendanceEventsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetAttendanceEventByIdAsync(string eventId, List\<string\> expand, bool expandReferenceNames)  
+  * GetAttendanceEventByIdAsync(string eventId, List\<string\> expand, bool expandReferenceNames)
+  * DeleteAttendanceEventByIdAsync(string attendanceEventId)  
 * /attendanceSchedules  
   * GetAttendanceSchedulesAsync(Dictionary\<string, object\> queryParams)  
   * LookupAttendanceSchedulesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetAttendanceScheduleByIdAsync(string scheduleId, List\<string\> expand, bool expandReferenceNames)  
+  * GetAttendanceScheduleByIdAsync(string scheduleId, List\<string\> expand, bool expandReferenceNames)
+  * DeleteAttendanceScheduleByIdAsync(string attendanceScheduleId)  
 * /grades  
   * GetGradesAsync(Dictionary\<string, object\> queryParams)  
   * LookupGradesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
