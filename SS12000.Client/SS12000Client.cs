@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -1267,6 +1268,17 @@ namespace SS12000.Client
         }
 
         /// <summary>
+        /// Post an attendance
+        /// </summary>
+        /// <param name="body">A body according to '#/components/schemas/Attendance'</param>
+        /// <returns>The attendance object</param>
+        public async Task<JsonElement> CreateAttendanceAsync(object body)
+        {
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            return await RequestAsync<JsonElement>(HttpMethod.Post, "/attendances", jsonContent: body);
+        }
+
+        /// <summary>
         /// Get multiple attendances based on a list of IDs.
         /// </summary>
         /// <param name="body">Request body with IDs.</param>
@@ -1344,6 +1356,17 @@ namespace SS12000.Client
             if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
 
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/attendanceEvents", queryParams);
+        }
+
+        /// <summary>
+        /// Post an attendance event
+        /// </summary>
+        /// <param name="body">A body according to '#/components/schemas/AttendanceEvent'</param>
+        /// <returns>The attendance event object</param>
+        public async Task<JsonElement> CreateAttendanceEventAsync(object body)
+        {
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            return await RequestAsync<JsonElement>(HttpMethod.Post, "/attendanceEvents", jsonContent: body);
         }
 
         /// <summary>
@@ -1442,6 +1465,17 @@ namespace SS12000.Client
             if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
 
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/attendanceSchedules", queryParams);
+        }
+
+        ///<summary>
+        /// Post an attendance schedule
+        /// </summary>
+        /// <param name="body">A body according to '#/components/schemas/AttendanceSchedule'</param>
+        /// <returns>The attendance schedule object</param>
+        public async Task<JsonElement> CreateAttendanceScheduleAsync(object body)
+        {
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            return await RequestAsync<JsonElement>(HttpMethod.Post, "/attendanceSchedules", jsonContent: body);
         }
 
         /// <summary>
@@ -1632,6 +1666,17 @@ namespace SS12000.Client
             if (!string.IsNullOrEmpty(pageToken)) queryParams.Add("pageToken", pageToken);
 
             return await RequestAsync<JsonElement>(HttpMethod.Get, "/absences", queryParams);
+        }
+
+        ///<summary>
+        /// Post an absence
+        /// </summary>
+        /// <param name="body">A body according to '#/components/schemas/Absence'</param>
+        /// <returns>The absence object</param>
+        public async Task<JsonElement> CreateAbsenceAsync(object body)
+        {
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            return await RequestAsync<JsonElement>(HttpMethod.Post, "/absences", jsonContent: body);
         }
 
         /// <summary>

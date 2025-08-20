@@ -31,7 +31,7 @@ All dates are in the RFC 3339 format, we're not cavemen here.
 
 1. Add the nuget package:
 ```
-dotnet add package SS12000.Client --version 0.1.0
+dotnet add package SS12000.Client
 ```
 or start from scratch:
 1. **Create a .NET Project:** If you don't have one, create a new .NET project (e.g., Console App, Web API).  
@@ -87,14 +87,14 @@ public class Program
 ```
 ### **Fetching Organizations**
 
-You can retrieve a list of organizations or a specific organization by its ID. Parameters are passed as a Dictionary\<string, object\>.  
++You can retrieve a list of organizations or a specific organization by its ID. Parameters are passed as typed method parameters (e.g. limit: int?, expand: List\<string\>, date filters as DateTime? — date-only params use "yyyy-MM-dd", date-time use RFC3339/"o"). See the API Reference and SS12000Client.cs XML docs for exact parameter names and formats.  
 ```
 public static async Task GetOrganizationData(SS12000Client client)  
 {  
     try  
     {  
         Console.WriteLine("\nFetching organizations...");  
-        var organizations = await client.GetOrganisationsAsync(new Dictionary<string, object> { { "limit", 2 } });  
+        var organizations = await client.GetOrganisationsAsync(limit: 2);
         Console.WriteLine("Fetched organizations:\n" + JsonSerializer.Serialize(organizations, new JsonSerializerOptions { WriteIndented = true }));
 
         if (organizations.TryGetProperty("data", out var orgsArray) && orgsArray.ValueKind == JsonValueKind.Array && orgsArray.GetArrayLength() > 0)  
@@ -125,7 +125,7 @@ public static async Task GetPersonData(SS12000Client client)
     try  
     {  
         Console.WriteLine("\nFetching persons...");  
-        var persons = await client.GetPersonsAsync(new Dictionary<string, object> { { "limit", 2 }, { "expand", new List<string> { "duties" } } });  
+        var persons = await client.GetPersonsAsync(limit: 2, expand: new List<string> { "duties" });
         Console.WriteLine("Fetched persons:\n" + JsonSerializer.Serialize(persons, new JsonSerializerOptions { WriteIndented = true }));
 
         if (persons.TryGetProperty("data", out var personsArray) && personsArray.ValueKind == JsonValueKind.Array && personsArray.GetArrayLength() > 0)  
@@ -168,7 +168,7 @@ public static async Task ManageSubscriptions(SS12000Client client)
         // Console.WriteLine("\nCreating a subscription...");  
         // var newSubscription = await client.CreateSubscriptionAsync(new  
         // {  
-        //     name = "My CSharp Test Subscription",  
+        //     name = "My Test Subscription",  
         //     target = "http://your-public-webhook-url.com/ss12000-webhook", // Replace with your public URL  
         //     resourceTypes = new\[\] { new { resource = "Person" }, new { resource = "Activity" } }  
         // });  
@@ -196,100 +196,102 @@ public static async Task ManageSubscriptions(SS12000Client client)
 
 ## **API Reference**
 
-The SS12000Client class is designed to expose asynchronous methods for all SS12000 API endpoints. All methods return Task<JsonElement> for data retrieval or Task for operations without content (e.g., DELETE). Parameters are typically passed as Dictionary<string, object> for query parameters or object for JSON bodies.  
+The SS12000Client class is designed to expose asynchronous methods for all SS12000 API endpoints. All methods return Task<JsonElement> for data retrieval or Task for operations without content (e.g., DELETE).
 Here is a list of the primary resource paths defined in the OpenAPI specification, along with their corresponding client methods:
 
 * /organisations  
-  * GetOrganisationsAsync(queryParams)  
-  * LookupOrganisationsAsync(object body, bool expandReferenceNames)  
-  * GetOrganisationByIdAsync(string orgId, bool expandReferenceNames)  
+  * GetOrganisationsAsync
+  * LookupOrganisationsAsync  
+  * GetOrganisationByIdAsync
 * /persons  
-  * GetPersonsAsync(queryParams)  
-  * LookupPersonsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetPersonByIdAsync(string personId, List\<string\> expand, bool expandReferenceNames)  
+  * GetPersonsAsync  
+  * LookupPersonsAsync  
+  * GetPersonByIdAsync  
 * /placements  
-  * GetPlacementsAsync(queryParams)  
-  * LookupPlacementsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetPlacementByIdAsync(string placementId, List\<string\> expand, bool expandReferenceNames)  
+  * GetPlacementsAsync  
+  * LookupPlacementsAsync  
+  * GetPlacementByIdAsync  
 * /duties  
-  * GetDutiesAsync(queryParams)  
-  * LookupDutiesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetDutyByIdAsync(string dutyId, List\<string\> expand, bool expandReferenceNames)  
+  * GetDutiesAsync  
+  * LookupDutiesAsync  
+  * GetDutyByIdAsync  
 * /groups  
-  * GetGroupsAsync(queryParams)  
-  * LookupGroupsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetGroupByIdAsync(string groupId, List\<string\> expand, bool expandReferenceNames)  
+  * GetGroupsAsync  
+  * LookupGroupsAsync  
+  * GetGroupByIdAsync  
 * /programmes  
-  * GetProgrammesAsync(queryParams)  
-  * LookupProgrammesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetProgrammeByIdAsync(string programmeId, List\<string\> expand, bool expandReferenceNames)  
+  * GetProgrammesAsync  
+  * LookupProgrammesAsync  
+  * GetProgrammeByIdAsync  
 * /studyplans  
-  * GetStudyPlansAsync(queryParams)  
-  * LookupStudyPlansAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetStudyPlanByIdAsync(string studyPlanId, List\<string\> expand, bool expandReferenceNames)  
+  * GetStudyPlansAsync  
+  * LookupStudyPlansAsync  
+  * GetStudyPlanByIdAsync  
 * /syllabuses  
-  * GetSyllabusesAsync(queryParams)  
-  * LookupSyllabusesAsync(object body, bool expandReferenceNames)  
-  * GetSyllabusByIdAsync(string syllabusId, bool expandReferenceNames)  
+  * GetSyllabusesAsync  
+  * LookupSyllabusesAsync  
+  * GetSyllabusByIdAsync 
 * /schoolUnitOfferings  
-  * GetSchoolUnitOfferingsAsync(queryParams)  
-  * LookupSchoolUnitOfferingsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetSchoolUnitOfferingByIdAsync(string offeringId, List\<string\> expand, bool expandReferenceNames)  
+  * GetSchoolUnitOfferingsAsync  
+  * LookupSchoolUnitOfferingsAsync  
+  * GetSchoolUnitOfferingByIdAsync 
 * /activities  
-  * GetActivitiesAsync(queryParams)  
-  * LookupActivitiesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetActivityByIdAsync(string activityId, List\<string\> expand, bool expandReferenceNames)  
+  * GetActivitiesAsync  
+  * LookupActivitiesAsync  
+  * GetActivityByIdAsync  
 * /calendarEvents  
-  * GetCalendarEventsAsync(queryParams)  
-  * LookupCalendarEventsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetCalendarEventByIdAsync(string eventId, List\<string\> expand, bool expandReferenceNames)  
+  * GetCalendarEventsAsync  
+  * LookupCalendarEventsAsync  
+  * GetCalendarEventByIdAsync  
 * /attendances  
-  * GetAttendancesAsync(queryParams)  
-  * LookupAttendancesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetAttendanceByIdAsync(string attendanceId, List\<string\> expand, bool expandReferenceNames)  
-  * DeleteAttendanceAsync(string attendanceId)  
+  * GetAttendancesAsync  
+  * CreateAttendanceAsync 
+  * LookupAttendancesAsync  
+  * GetAttendanceByIdAsync  
+  * DeleteAttendanceAsync
 * /attendanceEvents  
-  * GetAttendanceEventsAsync(queryParams)  
-  * LookupAttendanceEventsAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetAttendanceEventByIdAsync(string eventId, List\<string\> expand, bool expandReferenceNames)
-  * DeleteAttendanceEventByIdAsync(string attendanceEventId)  
+  * GetAttendanceEventsAsync  
+  * CreateAttendanceEventAsync 
+  * LookupAttendanceEventsAsync  
+  * GetAttendanceEventByIdAsync
+  * DeleteAttendanceEventByIdAsync
 * /attendanceSchedules  
-  * GetAttendanceSchedulesAsync(queryParams)  
-  * LookupAttendanceSchedulesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetAttendanceScheduleByIdAsync(string scheduleId, List\<string\> expand, bool expandReferenceNames)
-  * DeleteAttendanceScheduleByIdAsync(string attendanceScheduleId)  
+  * GetAttendanceSchedulesAsync
+  * CreateAttendanceScheduleAsync   
+  * LookupAttendanceSchedulesAsync  
+  * GetAttendanceScheduleByIdAsync
+  * DeleteAttendanceScheduleByIdAsync
 * /grades  
-  * GetGradesAsync(queryParams)  
-  * LookupGradesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetGradeByIdAsync(string gradeId, List\<string\> expand, bool expandReferenceNames)
-* /absenses
-  * GetAbsencesAsync(queryParams)
-  * LookupAbsencesAsync(object body, bool expandedReferenceNames)
-  * GetAbsenceByIdAsync(string absenceId)
+  * GetGradesAsync  
+  * LookupGradesAsync  
+  * GetGradeByIdAsync
+* /absences
+  * GetAbsencesAsync
+  * CreateAbsenceAsync 
+  * LookupAbsencesAsync
+  * GetAbsenceByIdAsync
 * /aggregatedAttendance  
-  * GetAggregatedAttendancesAsync(queryParams)  
-  * LookupAggregatedAttendancesAsync(object body, List\<string\> expand, bool expandReferenceNames)  
-  * GetAggregatedAttendanceByIdAsync(string attendanceId, List\<string\> expand, bool expandReferenceNames)  
+  * GetAggregatedAttendancesAsync
 * /resources  
-  * GetResourcesAsync(queryParams)  
-  * LookupResourcesAsync(object body, bool expandReferenceNames)  
-  * GetResourceByIdAsync(string resourceId, bool expandReferenceNames)  
+  * GetResourcesAsync  
+  * LookupResourcesAsync  
+  * GetResourceByIdAsync
 * /rooms  
-  * GetRoomsAsync(queryParams)  
-  * LookupRoomsAsync(object body, bool expandReferenceNames)  
-  * GetRoomByIdAsync(string roomId, bool expandReferenceNames)  
+  * GetRoomsAsync  
+  * LookupRoomsAsync  
+  * GetRoomByIdAsync
 * /subscriptions  
-  * GetSubscriptionsAsync(queryParams)  
-  * CreateSubscriptionAsync(object body)  
-  * DeleteSubscriptionAsync(string subscriptionId)  
-  * GetSubscriptionByIdAsync(string subscriptionId)  
-  * UpdateSubscriptionAsync(string subscriptionId, object body)  
+  * GetSubscriptionsAsync  
+  * CreateSubscriptionAsync
+  * DeleteSubscriptionAsync
+  * GetSubscriptionByIdAsync
+  * UpdateSubscriptionAsync  
 * /deletedEntities  
-  * GetDeletedEntitiesAsync(queryParams)  
+  * GetDeletedEntitiesAsync  
 * /log  
-  * CreateLogEntryAsync(object body)
+  * CreateLogEntryAsync
 * /statistics  
-  * CreateStatisticsAsync(object body)
+  * CreateStatisticsAsync
 
 Detailed information on available parameters can be found in the XML documentation comments within SS12000Client.cs.
 
