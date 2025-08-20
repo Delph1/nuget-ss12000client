@@ -1,6 +1,6 @@
-# **SS12000 C\# Client Library**
+# **SS12000 C# Client Library**
 
-This is a C\# client library designed to simplify interaction with the SS12000 API, a standard for information exchange between school administration processes based on OpenAPI 3.x. The library utilizes HttpClient for efficient HTTP communication and System.Text.Json for JSON serialization/deserialization, providing a structured and asynchronous approach to interact with **all** the API's defined endpoints.
+This is a C# client library designed to simplify interaction with the SS12000 API, a standard for information exchange between school administration processes based on OpenAPI 3.x. The library utilizes HttpClient for efficient HTTP communication and System.Text.Json for JSON serialization/deserialization, providing a structured and asynchronous approach to interact with **all** the API's defined endpoints.
 
 You can download your own personal copy of the SS12000 standard for free from here: [sis.se](https://www.sis.se/standarder/kpenstandard/forkopta-standarder/informationshantering-inom-utbildningssektorn/).
 
@@ -44,10 +44,10 @@ cd MySS12000App
 3. **Add Necessary Usings:** Ensure your project file (.csproj) includes the necessary framework references. The client uses System.Web for HttpUtility, which might require adding a package reference if you're not targeting a full .NET Framework. For .NET Core / .NET 5+, System.Web.HttpUtility is available via the System.Web.HttpUtility NuGet package.  
 ```
    <!-- In your .csproj file -->  
-   <ItemGroup\>  
+   <ItemGroup>  
        <PackageReference Include="System.Text.Json" Version="6.0.0" /> <!-- Or newer -->  
        <PackageReference Include="System.Web.HttpUtility" Version="1.0.0" /> <!-- Or newer, if not implicitly available -->  
-   </ItemGroup\>
+   </ItemGroup>
 ```
 
    The package has only two real dependencies: Microsoft.AspNetCore.WebUtilities and System.Text.Json. Add them manually if they don't resolve automatically. 
@@ -87,7 +87,7 @@ public class Program
 ```
 ### **Fetching Organizations**
 
-+You can retrieve a list of organizations or a specific organization by its ID. Parameters are passed as typed method parameters (e.g. limit: int?, expand: List\<string\>, date filters as DateTime? — date-only params use "yyyy-MM-dd", date-time use RFC3339/"o"). See the API Reference and SS12000Client.cs XML docs for exact parameter names and formats.  
++You can retrieve a list of organizations or a specific organization by its ID. Parameters are passed as typed method parameters (e.g. limit: int?, expand: List<string>, date filters as DateTime? — date-only params use "yyyy-MM-dd", date-time use RFC3339/"o"). See the API Reference and SS12000Client.cs XML docs for exact parameter names and formats.  
 ```
 public static async Task GetOrganizationData(SS12000Client client)  
 {  
@@ -170,9 +170,9 @@ public static async Task ManageSubscriptions(SS12000Client client)
         // {  
         //     name = "My Test Subscription",  
         //     target = "http://your-public-webhook-url.com/ss12000-webhook", // Replace with your public URL  
-        //     resourceTypes = new\[\] { new { resource = "Person" }, new { resource = "Activity" } }  
+        //     resourceTypes = new[] { new { resource = "Person" }, new { resource = "Activity" } }  
         // });  
-        // Console.WriteLine("Created subscription:\n" \+ JsonSerializer.Serialize(newSubscription, new JsonSerializerOptions { WriteIndented = true }));
+        // Console.WriteLine("Created subscription:\n" + JsonSerializer.Serialize(newSubscription, new JsonSerializerOptions { WriteIndented = true }));
 
         // Example: Delete a subscription  
         // if (subscriptions.TryGetProperty("data", out var subsArray) && subsArray.ValueKind == JsonValueKind.Array && subsArray.GetArrayLength() > 0)  
@@ -299,72 +299,72 @@ The .yaml file can be downloaded from the SS12000 site over at [sis.se](https://
 
 ## **Webhook Receiver (ASP.NET Core Example)**
 
-To receive webhooks in a C\# application, you would typically set up an ASP.NET Core Web API endpoint. This example demonstrates a basic controller for receiving SS12000 notifications.  
+To receive webhooks in a C# application, you would typically set up an ASP.NET Core Web API endpoint. This example demonstrates a basic controller for receiving SS12000 notifications.  
 This is just an example and is not part of the client library. It just shows how you could implement a receiver server for the webhooks. The code below is not production ready code, it's just a thought experiment that will point you in a direction toward a simple solution. 
 
 ```
-// Save this in a separate file, e.g., \`Controllers/WebhookController.cs\`  
+// Save this in a separate file, e.g., `Controllers/WebhookController.cs`  
 using Microsoft.AspNetCore.Mvc;  
 using System.Text.Json;  
 using System.Threading.Tasks;
 
 namespace MySS12000App.Controllers  
 {  
-    \[ApiController\]  
-    \[Route("\[controller\]")\]  
+    [ApiController]  
+    [Route("[controller]")]  
     public class WebhookController : ControllerBase  
     {  
         // You might inject SS12000Client here if you need to make follow-up API calls  
-        // private readonly SS12000Client \_ss12000Client;
+        // private readonly SS12000Client _ss12000Client;
 
         // public WebhookController(SS12000Client ss12000Client)  
         // {  
-        //     \_ss12000Client \= ss12000Client;  
+        //     _ss12000Client = ss12000Client;  
         // }
 
-        /// \<summary\>  
+        /// <summary>  
         /// Webhook endpoint for SS12000 notifications.  
-        /// \</summary\>  
-        \[HttpPost("ss12000-webhook")\]  
-        public async Task\<IActionResult\> ReceiveSS12000Webhook()  
+        /// </summary>  
+        [HttpPost("ss12000-webhook")]  
+        public async Task<IActionResult> ReceiveSS12000Webhook()  
         {  
-            Console.WriteLine("Received a webhook from SS12000\!");  
+            Console.WriteLine("Received a webhook from SS12000!");  
             foreach (var header in Request.Headers)  
             {  
-                Console.WriteLine($"Header: {header.Key} \= {string.Join(", ", header.Value)}");  
+                Console.WriteLine($"Header: {header.Key} = {string.Join(", ", header.Value)}");  
             }
 
             try  
             {  
-                using (var reader \= new System.IO.StreamReader(Request.Body))  
+                using (var reader = new System.IO.StreamReader(Request.Body))  
                 {  
-                    var jsonBody \= await reader.ReadToEndAsync();  
-                    Console.WriteLine("Body:\\n" \+ JsonSerializer.Serialize(JsonDocument.Parse(jsonBody).RootElement, new JsonSerializerOptions { WriteIndented \= true }));
+                    var jsonBody = await reader.ReadToEndAsync();  
+                    Console.WriteLine("Body:\n" + JsonSerializer.Serialize(JsonDocument.Parse(jsonBody).RootElement, new JsonSerializerOptions { WriteIndented = true }));
 
                     // Here you can implement your logic to handle the webhook message.  
                     // E.g., save the information to a database, trigger an update, etc.
 
-                    using (JsonDocument doc \= JsonDocument.Parse(jsonBody))  
+                    using (JsonDocument doc = JsonDocument.Parse(jsonBody))  
                     {  
-                        if (doc.RootElement.TryGetProperty("modifiedEntites", out JsonElement modifiedEntitiesElement) && modifiedEntitiesElement.ValueKind \== JsonValueKind.Array)  
+                        if (doc.RootElement.TryGetProperty("modifiedEntites", out JsonElement modifiedEntitiesElement) && modifiedEntitiesElement.ValueKind == JsonValueKind.Array)  
                         {  
                             foreach (var resourceType in modifiedEntitiesElement.EnumerateArray())  
                             {  
                                 Console.WriteLine($"Changes for resource type: {resourceType.GetString()}");  
                                 // You can call the SS12000Client here to fetch updated information  
                                 // depending on the resource type.  
-                                // Example: if (resourceType.GetString() \== "Person") { await \_ss12000Client.GetPersonsAsync(...); }  
+                                // Example: if (resourceType.GetString() == "Person") { await _ss12000Client.GetPersonsAsync(...); }  
                             }  
                         }
 
-                        if (doc.RootElement.TryGetProperty("deletedEntities", out JsonElement deletedEntitiesElement) && deletedEntitiesElement.ValueKind \== JsonValueKind.Array)  
+                        if (doc.RootElement.TryGetProperty("deletedEntities", out JsonElement deletedEntitiesElement) && deletedEntitiesElement.ValueKind == JsonValueKind.Array)  
                         {  
                             Console.WriteLine("There are deleted entities to fetch from /deletedEntities.");  
                             // Call client.GetDeletedEntitiesAsync(...) to fetch the deleted IDs.  
                         }  
                     }
 
-                    return Ok("Webhook received successfully\!");  
+                    return Ok("Webhook received successfully!");  
                 }  
             }  
             catch (JsonException ex)  
@@ -388,21 +388,21 @@ To enable this webhook endpoint in your ASP.NET Core application, ensure you hav
 
 ```
    // In Program.cs  
-   var builder \= WebApplication.CreateBuilder(args);
+   var builder = WebApplication.CreateBuilder(args);
 
    // Add services to the container.  
    builder.Services.AddControllers();  
    // Optional: Register HttpClient and SS12000Client for dependency injection  
    // builder.Services.AddHttpClient();  
-   // builder.Services.AddScoped\<SS12000Client\>(sp \=\>  
+   // builder.Services.AddScoped<SS12000Client>(sp =>  
    // {  
-   //     var httpClient \= sp.GetRequiredService\<HttpClient\>();  
-   //     var baseUrl \= builder.Configuration\["SS12000:BaseUrl"\]; // Get from appsettings.json  
-   //     var authToken \= builder.Configuration\["SS12000:AuthToken"\]; // Get from appsettings.json  
+   //     var httpClient = sp.GetRequiredService<HttpClient>();  
+   //     var baseUrl = builder.Configuration["SS12000:BaseUrl"]; // Get from appsettings.json  
+   //     var authToken = builder.Configuration["SS12000:AuthToken"]; // Get from appsettings.json  
    //     return new SS12000Client(baseUrl, authToken, httpClient);  
    // });
 
-   var app \= builder.Build();
+   var app = builder.Build();
 
    // Configure the HTTP request pipeline.  
    app.UseRouting();  
@@ -424,7 +424,7 @@ To enable this webhook endpoint in your ASP.NET Core application, ensure you hav
      "AllowedHosts": "\*",  
      "SS12000": {  
        "BaseUrl": "https://some.server.se/v2.0",  
-       "AuthToken": "YOUR\_JWT\_TOKEN\_HERE"  
+       "AuthToken": "YOUR_JWT_TOKEN_HERE"  
      }  
    }
 ```
