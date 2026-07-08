@@ -1,3 +1,7 @@
+# Abandoned
+
+This project has been abandoned.
+
 # **SS12000 C# Client Library**
 
 This is a C# client library designed to simplify interaction with the SS12000 API, a standard for information exchange between school administration processes based on OpenAPI 3.x. The library utilizes HttpClient for efficient HTTP communication and System.Text.Json for JSON serialization/deserialization, providing a structured and asynchronous approach to interact with **all** the API's defined endpoints.
